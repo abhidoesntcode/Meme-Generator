@@ -23,21 +23,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount the static directory to serve HTML, CSS, JS
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-@app.get("/", response_class=HTMLResponse)
-async def read_index():
-    with open("static/index.html", "r", encoding="utf-8") as f:
-        return f.read()
-
-@app.get("/robots.txt", include_in_schema=False)
-async def robots():
-    return FileResponse("static/robots.txt", media_type="text/plain")
-
-@app.get("/sitemap.xml", include_in_schema=False)
-async def sitemap():
-    return FileResponse("static/sitemap.xml", media_type="application/xml")
+# Mount not needed in serverless
+# Static files served by Vercel directly
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 

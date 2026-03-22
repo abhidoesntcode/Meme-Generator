@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('humor_style', humorStyleSelect.value);
 
         try {
-            const response = await fetch('/generate', { method: 'POST', body: formData });
+            const response = await fetch('/api/generate', { method: 'POST', body: formData });
             const data = await response.json();
 
             if (!response.ok) {
