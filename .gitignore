@@ -1,0 +1,27 @@
+# Environment variables - NEVER push this
+.env
+*.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary SEO -->
+    <title>AI Meme Generator - Create Funny Meme Captions Instantly for Free</title>
+    <meta name="description" content="Generate hilarious meme captions for any image in seconds — no login, no signup, 100% free. Choose from Sarcastic, Dark Humor, Wholesome, Gen Z, and Dad Joke styles.">
+    <meta name="keywords" content="meme generator, AI meme, free meme maker, funny captions, sarcastic memes, dark humor memes, meme caption generator, AI caption generator, no login meme generator">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="AI Meme Generator">
+
+    <!-- Canonical URL (replace with your actual Vercel domain) -->
+    <link rel="canonical" href="https://your-app.vercel.app/">
+
+    <!-- Open Graph (Facebook, LinkedIn, WhatsApp previews) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AI Meme Generator - Funny Captions in Seconds">
+    <meta property="og:description" content="Upload any image and get 5 hilarious meme captions instantly. No login required. Try Sarcastic, Dark Humor, Wholesome, Gen Z & Dad Joke styles.">
+    <meta property="og:url" content="https://your-app.vercel.app/">
+    <meta property="og:site_name" content="AI Meme Generator">
+    <meta property="og:image" content="https://your-app.vercel.app/static/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI Meme Generator - Funny Captions in Seconds">
+    <meta name="twitter:description" content="Upload any image and get 5 hilarious meme captions instantly. No login required.">
+    <meta name="twitter:image" content="https://your-app.vercel.app/static/og-image.png">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "AI Meme Generator",
+        "url": "https://your-app.vercel.app/",
+        "description": "Generate funny meme captions for any image instantly using AI. No login or signup required.",
+        "applicationCategory": "EntertainmentApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "No login required",
+            "Instant AI-generated captions",
+            "Multiple humor styles",
+            "Free to use"
+        ]
+    }
+    </script>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css?v=2.0">
+</head>
+<body>
+
+    <!-- Animated BG Blobs -->
+    <div class="background-effects">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div class="blob blob-4"></div>
+    </div>
+
+    <!-- Floating Emojis (outside blur parent!) -->
+    <div id="emojiContainer" class="emoji-container"></div>
+
+    <div class="container glass-panel">
+        <header>
+            <div class="logo">
+                <span class="logo-emoji">😂</span>
+                <h1 class="gradient-text">AI Meme Gen</h1>
+                <span class="logo-emoji">🔥</span>
+            </div>
+            <p class="tagline">Upload a pic, pick a vibe — let <span class="highlight">AI magic</span> do the rest.</p>
+
+            <!-- Feature Badges -->
+            <div class="feature-badges">
+                <div class="badge">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Instant Results</span>
+                </div>
+                <div class="badge">
+                    <i class="fa-solid fa-lock-open"></i>
+                    <span>No Login Required</span>
+                </div>
+                <div class="badge">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>100% Free</span>
+                </div>
+                <div class="badge">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span>Works in Seconds</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="layout-grid">
+                <!-- Left Column: Controls -->
+                <div class="controls-section glass-card">
+
+                    <div class="input-group">
+                        <label for="humorStyle"><i class="fa-solid fa-masks-theater"></i> Humor Style</label>
+                        <div class="select-wrapper">
+                            <select id="humorStyle">
+                                <option value="Sarcastic">😒 Sarcastic</option>
+                                <option value="Dark Humor">💀 Dark Humor</option>
+                                <option value="Wholesome">🥰 Wholesome</option>
+                                <option value="Gen Z">🤣 Gen Z (Brainrot)</option>
+                                <option value="Dad Jokes">👴 Dad Jokes</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label><i class="fa-solid fa-image"></i> Upload Image</label>
+                        <div class="upload-dropzone" id="dropzone">
+                            <input type="file" id="imageInput" accept="image/jpeg, image/png, image/jpg" hidden>
+                            <div class="upload-content">
+                                <i class="fa-solid fa-cloud-arrow-up cloud-icon"></i>
+                                <h3>Drag & Drop</h3>
+                                <span>or click to browse (JPG, PNG)</span>
+                            </div>
+                            <img id="imagePreview" src="" alt="Preview" style="display: none;">
+                            <button id="removeImageBtn" class="icon-btn" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+
+                    <button id="generateBtn" class="primary-btn" disabled>
+                        <span>Generate Memes</span>
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </button>
+
+                    <div id="loadingIndicator" class="loading-state" style="display: none;">
+                        <div class="loader-wrapper">
+                            <span class="loader"></span>
+                            <div class="loader-emoji">🤔</div>
+                        </div>
+                        <p>AI is cooking up something hilarious...</p>
+                    </div>
+                </div>
+
+                <!-- Right Column: Results -->
+                <div class="results-section glass-card">
+                    <div class="results-header">
+                        <h2><i class="fa-solid fa-bolt"></i> Results</h2>
+                        <span class="results-badge" id="resultsBadge" style="display:none;">✨ Fresh</span>
+                    </div>
+
+                    <div id="resultsContainer" class="empty-state">
+                        <div class="placeholder-icon bounce">😶‍🌫️</div>
+                        <p>Your hilarious captions will appear here.</p>
+                        <p class="hint">Upload an image to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <p>Powered by <span class="highlight">AI</span> · Built for laughs 😂</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="/static/script.js?v=2.0"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+jupyter
+ipywidgets
+google-generativeai
+Pillow
+fastapi
+uvicorn
+python-multipart
+python-dotenv
