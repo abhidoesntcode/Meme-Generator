@@ -52,8 +52,8 @@ async def generate_meme(
         # Configure Gemini
         genai.configure(api_key=API_KEY)
         
-        # Using gemini-2.5-flash as verified to exist for this key
-        model_name = 'gemini-2.5-flash'
+        # Using gemini-1.5-flash as verified to exist for this key
+        model_name = 'gemini-1.5-flash'
         try:
             model = genai.GenerativeModel(model_name)
         except Exception as model_err:
