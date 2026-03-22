@@ -7,10 +7,12 @@ from PIL import Image
 import io
 import os
 from dotenv import load_dotenv
+from mangum import Mangum
 
 load_dotenv()
 
 app = FastAPI(title="AI Meme Generator")
+handler = Mangum(app)
 
 # Enable CORS for local development
 app.add_middleware(
