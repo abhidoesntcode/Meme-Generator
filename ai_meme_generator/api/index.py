@@ -119,7 +119,15 @@ async def read_index():
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok"}
+    diagnostic = {"status": "ok", "api_key_set": bool(API_KEY), "available_models": []}
+    if API_KEY:
+        try:
+            client = genai.Client(api_key=API_KEY)
+            models = client.models.list()
+            diagnostic["available_models"] = [m.name for m in models]
+        except Exception as e:
+            diagnostic["error"] = str(e)
+    return diagnostic
 
 @app.get("/robots.txt", include_in_schema=False)
 async def robots():
