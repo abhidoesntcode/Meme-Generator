@@ -52,13 +52,12 @@ async def generate_meme(
         except Exception as diag_err:
             print(f"DIAGNOSTIC FAILED: {diag_err}")
 
-        # Comprehensive fallback list
+        # Reliable model fallback list for Free Tier
         model_names = [
-            'gemini-1.5-flash',        # Most compatible for free-tier
-            'gemini-1.5-pro',          # High-end fallback
-            'gemini-1.0-pro',          # Legacy baseline
-            'gemini-2.0-flash-exp',    # Experimental
-            'gemini-2.0-flash',        # Newest
+            'gemini-1.5-flash',        # High quota, best for free tier
+            'gemini-1.5-flash-8b',     # Lightweight alternative
+            'gemini-1.5-pro',          # High performance fallback
+            'gemini-1.0-pro',          # Baseline compatibility
         ]
         
         response = None
