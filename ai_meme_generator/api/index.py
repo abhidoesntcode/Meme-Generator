@@ -64,11 +64,11 @@ async def generate_meme(
         except Exception as diag_err:
             print(f"DIAGNOSTIC FAILED: {diag_err}")
 
-        # 100% Free Tier model list with full prefixes for 404 protection
+        # Confirmed models available for this specific API Key (from /api/health)
         model_names = [
-            'models/gemini-2.0-flash', # Newest free model
-            'models/gemini-1.5-flash', # Standard free tier
-            'models/gemini-1.5-flash-8b' # Compact fallback
+            'models/gemini-2.5-flash', # Confirmed available
+            'models/gemini-2.0-flash', # Confirmed available
+            'models/gemini-flash-latest' # Generalized fallback
         ]
         
         response = None
