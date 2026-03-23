@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from google import genai
+from google.genai import types
 from PIL import Image
 import io
 import os
@@ -36,11 +37,22 @@ async def generate_meme(
         if not API_KEY:
             raise HTTPException(status_code=500, detail="GEMINI_API_KEY is not configured on Render")
 
-        # Read the uploaded image
+        # Read and resize the uploaded image to stay within token limits
         contents = await image.read()
-        img = Image.open(io.BytesIO(contents))
+        raw_img = Image.open(io.BytesIO(contents))
         
-        # Initialize Google GenAI Client with explicit 'v1' preference
+        # Resize if image is too large (important for token & quota management)
+        # We use a max dimension of 800px
+        max_dim = 800
+        if max(raw_img.width, raw_img.height) > max_dim:
+            raw_img.thumbnail((max_dim, max_dim))
+        
+        # Re-save to buffer for transmission
+        img_byte_arr = io.BytesIO()
+        raw_img.save(img_byte_arr, format='JPEG', quality=85)
+        processed_img = Image.open(img_byte_arr)
+
+        # Initialize Google GenAI Client
         client = genai.Client(api_key=API_KEY)
         
         # --- DIAGNOSTICS: List Available Models to Render Logs ---
@@ -66,11 +78,18 @@ async def generate_meme(
         for model_name in model_names:
             try:
                 print(f"Attempting to generate with model: {model_name}")
-                prompt = f"Analyze this image and generate 5 short, hilarious meme captions. Humor style: {humor_style}. Format as a numbered list."
+                prompt = f"Analyze this image and generate 5 short, hilarious meme captions for social media. Humor style: {humor_style}. Format as a numbered list."
+                
+                # Use a specific config to limit tokens & prevent errors
+                config = types.GenerateContentConfig(
+                    max_output_tokens=512,
+                    temperature=0.8
+                )
                 
                 response = client.models.generate_content(
                     model=model_name,
-                    contents=[prompt, img]
+                    contents=[prompt, processed_img],
+                    config=config
                 )
                 if response and response.text:
                     print(f"SUCCESS with model: {model_name}")
@@ -88,6 +107,7 @@ async def generate_meme(
     except Exception as e:
         print(f"FINAL APP ERROR: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 # --- RENDER STATIC FILE SERVING ---
 # This allows Render to serve your script.js, style.css, etc.
