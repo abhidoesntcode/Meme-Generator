@@ -40,15 +40,25 @@ async def generate_meme(
         contents = await image.read()
         img = Image.open(io.BytesIO(contents))
         
-        # Initialize Google GenAI Client
+        # Initialize Google GenAI Client with explicit 'v1' preference
         client = genai.Client(api_key=API_KEY)
         
-        # Robust model fallback list
+        # --- DIAGNOSTICS: List Available Models to Render Logs ---
+        print("DIAGNOSTICS: Listing your available models:")
+        try:
+            available_models = client.models.list()
+            for m in available_models:
+                print(f"- Found model: {m.name}")
+        except Exception as diag_err:
+            print(f"DIAGNOSTIC FAILED: {diag_err}")
+
+        # Comprehensive fallback list
         model_names = [
-            'gemini-2.0-flash',        # Newest & Fastest
-            'gemini-1.5-flash-latest', # Most stable Flash
-            'gemini-1.5-flash',        # Standard Flash
-            'gemini-pro'               # Legacy Fallback
+            'gemini-1.5-flash',        # Most compatible for free-tier
+            'gemini-1.5-pro',          # High-end fallback
+            'gemini-1.0-pro',          # Legacy baseline
+            'gemini-2.0-flash-exp',    # Experimental
+            'gemini-2.0-flash',        # Newest
         ]
         
         response = None
@@ -56,25 +66,28 @@ async def generate_meme(
         
         for model_name in model_names:
             try:
-                prompt = f"Analyze this image and generate 5 short, hilarious meme captions for social media. Humor style: {humor_style}. Format as a numbered list."
+                print(f"Attempting to generate with model: {model_name}")
+                prompt = f"Analyze this image and generate 5 short, hilarious meme captions. Humor style: {humor_style}. Format as a numbered list."
                 
                 response = client.models.generate_content(
                     model=model_name,
                     contents=[prompt, img]
                 )
-                if response:
+                if response and response.text:
+                    print(f"SUCCESS with model: {model_name}")
                     break
             except Exception as e:
                 last_error = str(e)
+                print(f"Model {model_name} failed: {last_error}")
                 continue
         
         if not response:
-            raise Exception(f"All Gemini models failed. Last error: {last_error}")
+            raise Exception(f"All models failed. Last error: {last_error}")
             
         return {"success": True, "captions": response.text}
         
     except Exception as e:
-        print(f"Deployment Error: {e}")
+        print(f"FINAL APP ERROR: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # --- RENDER STATIC FILE SERVING ---
@@ -96,3 +109,4 @@ async def robots():
 @app.get("/sitemap.xml", include_in_schema=False)
 async def sitemap():
     return FileResponse(os.path.join(BASE_DIR, "sitemap.xml"))
+
