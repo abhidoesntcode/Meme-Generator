@@ -2,7 +2,7 @@ from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-import google.generativeai as genai
+from google import genai
 from PIL import Image
 import io
 import os
@@ -21,6 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# API Key from Environment
 API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Define the base directory (where index.html and other files are)
@@ -39,31 +40,41 @@ async def generate_meme(
         contents = await image.read()
         img = Image.open(io.BytesIO(contents))
         
-        # Configure Gemini
-        genai.configure(api_key=API_KEY)
+        # Initialize Google GenAI Client
+        client = genai.Client(api_key=API_KEY)
         
-        # Try different model names for better compatibility
-        model_names = ['gemini-1.5-flash-latest', 'gemini-1.5-flash', 'gemini-pro']
-        model = None
-        for name in model_names:
+        # Robust model fallback list
+        model_names = [
+            'gemini-2.0-flash',        # Newest & Fastest
+            'gemini-1.5-flash-latest', # Most stable Flash
+            'gemini-1.5-flash',        # Standard Flash
+            'gemini-pro'               # Legacy Fallback
+        ]
+        
+        response = None
+        last_error = ""
+        
+        for model_name in model_names:
             try:
-                model = genai.GenerativeModel(name)
-                # Success
-                break
-            except:
+                prompt = f"Analyze this image and generate 5 short, hilarious meme captions for social media. Humor style: {humor_style}. Format as a numbered list."
+                
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=[prompt, img]
+                )
+                if response:
+                    break
+            except Exception as e:
+                last_error = str(e)
                 continue
         
-        if not model:
-             raise Exception("Failed to initialize any compatible Gemini models.")
-
-        prompt = f"Analyze this image and generate 5 short meme captions. Style: {humor_style}."
-        
-        response = model.generate_content([prompt, img])
-        
+        if not response:
+            raise Exception(f"All Gemini models failed. Last error: {last_error}")
+            
         return {"success": True, "captions": response.text}
         
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Deployment Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # --- RENDER STATIC FILE SERVING ---

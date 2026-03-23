@@ -1,6 +1,6 @@
 jupyter
 ipywidgets
-google-generativeai
+google-genai
 Pillow
 fastapi
 uvicorn
