@@ -78,19 +78,36 @@ async def generate_meme(
         for model_name in model_names:
             try:
                 print(f"Attempting to generate with model: {model_name}")
-                prompt = f"Analyze this image and generate 5 short, hilarious meme captions for social media. Humor style: {humor_style}. Format as a numbered list."
+                prompt = f"Generate 5 short, hilarious meme captions for social media. Humor style: {humor_style}. Format as a numbered list."
                 
-                # Use a specific config to limit tokens & prevent errors
                 config = types.GenerateContentConfig(
-                    max_output_tokens=512,
-                    temperature=0.8
+                    max_output_tokens=300,
+                    temperature=0.8,
+                    stop_sequences=["\n6", "6."]
                 )
                 
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=[prompt, processed_img],
-                    config=config
-                )
+                # FIRST TRY: With Image
+                try:
+                    print("TRYING WITH IMAGE...")
+                    response = client.models.generate_content(
+                        model=model_name,
+                        contents=[prompt, processed_img],
+                        config=config
+                    )
+                except Exception as img_err:
+                    err_msg = str(img_err).lower()
+                    if "token" in err_msg or "400" in err_msg or "limit" in err_msg:
+                        print(f"VISION FAILED ({err_msg}). FALLING BACK TO TEXT-ONLY...")
+                        # SECOND TRY: Without Image (Fallback)
+                        fallback_prompt = f"Create 5 hilarious meme captions for a social media image. Theme/Style: {humor_style}. (AI Note: Image vision was glitchy, so using pure creativity). Format as a numbered list."
+                        response = client.models.generate_content(
+                            model=model_name,
+                            contents=fallback_prompt,
+                            config=config
+                        )
+                    else:
+                        raise img_err # Rethrow if it's a different error (like API Key)
+
                 if response and response.text:
                     print(f"SUCCESS with model: {model_name}")
                     break
