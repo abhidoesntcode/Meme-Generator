@@ -77,12 +77,13 @@ async def generate_meme(
         for model_name in model_names:
             try:
                 print(f"Attempting to generate with model: {model_name}")
-                prompt = f"Generate 5 short, hilarious meme captions for social media. Humor style: {humor_style}. Format as a numbered list."
+                # Clearer instructions to avoid intro text and cut-offs
+                prompt = f"Write exactly 5 hilarious, short meme captions for this image. Style: {humor_style}. Output ONLY the numbered list. No intro text."
                 
                 config = types.GenerateContentConfig(
-                    max_output_tokens=300,
-                    temperature=0.8,
-                    stop_sequences=["\n6", "6."]
+                    max_output_tokens=500, # Increased for safety
+                    temperature=0.9,
+                    stop_sequences=["6."]
                 )
                 
                 # FIRST TRY: With Image
