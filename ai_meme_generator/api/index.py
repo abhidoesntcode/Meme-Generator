@@ -84,17 +84,10 @@ async def generate_meme(
                     "Make sure each caption is a complete, finished sentence."
                 )
                 
-                # Relaxed config for maximum creativity and consistency
-                # We use BLOCK_NONE to ensure the AI doesn't stop half-way
+                # Robust config for maximum reliability
                 config = types.GenerateContentConfig(
-                    max_output_tokens=1024,
-                    temperature=0.8,
-                    safety_settings=[
-                        types.SafetySetting(category="HATE_SPEECH", threshold="BLOCK_NONE"),
-                        types.SafetySetting(category="HARASSMENT", threshold="BLOCK_NONE"),
-                        types.SafetySetting(category="SEXUALLY_EXPLICIT", threshold="BLOCK_NONE"),
-                        types.SafetySetting(category="DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
-                    ]
+                    max_output_tokens=2048, # Maximize space
+                    temperature=0.8
                 )
                 
                 # FIRST TRY: With Image
