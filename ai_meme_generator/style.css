@@ -235,6 +235,14 @@ header {
     50%       { transform: rotate(8deg) scale(1.15); }
 }
 
+.header-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 15px var(--glow-purple));
+    animation: wiggle 2.5s ease-in-out infinite;
+}
+
 h1 {
     font-family: var(--font-heading);
     font-size: clamp(2.2rem, 5vw, 3.5rem);
