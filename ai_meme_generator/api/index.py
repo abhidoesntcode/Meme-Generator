@@ -77,13 +77,24 @@ async def generate_meme(
         for model_name in model_names:
             try:
                 print(f"Attempting to generate with model: {model_name}")
-                # Clearer instructions to avoid intro text and cut-offs
-                prompt = f"Write exactly 5 hilarious, short meme captions for this image. Style: {humor_style}. Output ONLY the numbered list. No intro text."
+                # Pure instructions for the best results
+                prompt = (
+                    f"Write exactly 5 hilarious, witty meme captions for this image. "
+                    f"Style: {humor_style}. Output ONLY a numbered list (1 to 5). "
+                    "Make sure each caption is a complete, finished sentence."
+                )
                 
+                # Relaxed config for maximum creativity and consistency
+                # We use BLOCK_NONE to ensure the AI doesn't stop half-way
                 config = types.GenerateContentConfig(
-                    max_output_tokens=500, # Increased for safety
-                    temperature=0.9,
-                    stop_sequences=["6."]
+                    max_output_tokens=1024,
+                    temperature=0.8,
+                    safety_settings=[
+                        types.SafetySetting(category="HATE_SPEECH", threshold="BLOCK_NONE"),
+                        types.SafetySetting(category="HARASSMENT", threshold="BLOCK_NONE"),
+                        types.SafetySetting(category="SEXUALLY_EXPLICIT", threshold="BLOCK_NONE"),
+                        types.SafetySetting(category="DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
+                    ]
                 )
                 
                 # FIRST TRY: With Image
